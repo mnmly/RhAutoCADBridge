@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <Version>1.0.0</Version>
+    <Title>RhAutoCADBridge</Title>
+    <Description>Commands to bridge the gap between Rhinocerous and AutoCAD, such as copy and paste between the apps.</Description>
+    <RhinoMacLauncher>/Applications/Rhino 7.app</RhinoMacLauncher>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="RhinoCommon" Version="6.16.19190.7001" IncludeAssets="compile;build" />
+  </ItemGroup>
+  
+</Project>
