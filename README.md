@@ -1,6 +1,6 @@
 # RhAutoCADBridge
 
-Commands to bridge the gap between Rhinocerous and AutoCAD, such as copy and paste between the apps.
+Commands to bridge the gap between Rhinocerous and AutoCAD, starting with copy and paste between the apps, may grow into a bigger collection... maybe not.
 
 *Currently supported only for Mac*
 
