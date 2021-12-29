@@ -2,7 +2,7 @@
 
 Commands to bridge the gap between Rhinocerous and AutoCAD, such as copy and paste between the apps.
 
-* Currently only for Mac *
+*Currently supported only for Mac*
 
 
 - `CopyForAutoCAD`: Copy the objects in clipboard pasta-able to AutoCAD
