@@ -32,7 +32,6 @@ namespace MNML {
 					RhinoApp.WriteLine("Please select objects before running this commands");
 					return Result.Failure;
 				}
-
 			    var gp = new GetPoint();
 			    gp.SetCommandPrompt("Pick Insertion Point");
 			    gp.Get();
@@ -42,8 +41,8 @@ namespace MNML {
 			    var pointStr = point.X + "," + point.Y + "," + point.Z;
 			    var outPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()+ ".dwg");
 
-			    // Export with origin
-			    var command = "_-ExportWithOrigin " + pointStr + " \"" + outPath + "\" _Enter" ;
+			    // Export projected geometry with origin
+			    var command = "_-ProjectToCplane y _-ExportWithOrigin " + pointStr + " \"" + outPath + "\" _Enter" ;
 			    RhinoApp.RunScript(command, false);
 
 #if ON_RUNTIME_WIN
@@ -67,9 +66,27 @@ namespace MNML {
                     else { arrays.Add(0); }
                 }
 
-                // magic numbers different per copy length = 40
-                // const byte[] data = { 0xC9, 0x5A, 0xA3, 0x97, 0x41, 0xB6, 0xF1, 0x40, 0xC4, 0xC4, 0x30, 0xBF, 0x1C, 0x9E, 0xDE, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                for (var i = 0; i < 40; i++) { arrays.Add(0); } 
+                //Print("" + arrays.Count);
+
+                // at 1056, coordinate of insertion points;
+                var posXBytes = BitConverter.GetBytes((double)point.X);
+                var posYBytes = BitConverter.GetBytes((double)point.Y);
+                for (var i = 0; i < posXBytes.Length; i++)
+                {
+                    arrays.Add(posXBytes[i]);
+                }
+                for (var i = 0; i < posYBytes.Length; i++)
+                {
+                    arrays.Add(posYBytes[i]);
+                }
+
+                /* 
+                  magic numbers different per copy length = 24
+                  const byte[] data = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                */
+
+                for (var i = 0; i < 24; i++) { arrays.Add(0); }
 
                 // another magic numbers same per copy; length = 8
                 var bytes4 = new byte[] { 0x10, 0x21, 0xB3, 0x00, 0x00, 0x00, 0x00 };
