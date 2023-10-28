@@ -1,22 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <Version>1.0.1</Version>
+    <TargetFrameworks>net7.0;net48</TargetFrameworks>
+    <Version>1.0.3</Version>
     <Title>RhAutoCADBridge</Title>
     <Description>Commands to bridge the gap between Rhinocerous and AutoCAD, such as copy and paste between the apps.</Description>
-    <RhinoMacLauncher>/Applications/Rhino 7.app</RhinoMacLauncher>
+    <RhinoMacLauncher>8</RhinoMacLauncher>
     <ReleaseVersion>0.2</ReleaseVersion>
+    <TargetExt>.rhp</TargetExt>
     <Authors>Hiroaki Yamane</Authors>
     <ProjectUrl>https://github.com/mnmly/$(AssemblyName)</ProjectUrl>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="RhinoCommon" />
+    <EmbeddedResource Include="EmbeddedResources\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="RhinoCommon" Version="7.13.21348.13001" />
+    <PackageReference Include="RhinoCommon" Version="8.0.23292.13303-beta" />
   </ItemGroup>
 </Project>
