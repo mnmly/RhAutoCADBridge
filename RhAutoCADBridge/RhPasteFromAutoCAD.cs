@@ -2,6 +2,8 @@
 using Rhino;
 using Rhino.Commands;
 using Eto.Forms;
+using System.IO;
+using System.Linq;
 
 namespace MNML {
 
@@ -25,15 +27,18 @@ namespace MNML {
 
 			protected override Result RunCommand(Rhino.RhinoDoc doc, RunMode mode)
 			{
-				var data = Clipboard.Instance.GetData(RhAutoCADBridgePlugin.AutoCADFileTypeIdentifier);
-				if (data.LongLength > 0) { 
-					var path = Encoding.UTF32.GetString(data).Replace("\0", string.Empty); ;
-					var command = "_-Import " + " \"" + path + "\" _Enter";
-					RhinoApp.RunScript(command, false);
-					return Result.Success;
-				} else { 
-				    return Result.Failure;
-				}
+				string result = Path.GetTempPath();
+				var directory = new DirectoryInfo(result);
+
+				// or...
+				var myFile = directory.GetFiles()
+				  .OrderByDescending(f => f.LastWriteTime)
+				  .Where(f => f.Name.ToLower().EndsWith("dwg"))
+				  .First();
+
+				string command = "-_Import " + Path.Combine(result, myFile.ToString()) + " _Enter";
+				RhinoApp.RunScript(command, false);
+				return Result.Success;
 			}
 	    }
 	}

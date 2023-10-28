@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.810.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhAutoCADBridge", "RhAutoCADBridge\RhAutoCADBridge.csproj", "{468B9188-75D5-4A53-BD33-8CEF3DB4E14C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhAutoCADBridge.Mac", "RhAutoCADBridge\RhAutoCADBridge.Mac.csproj", "{468B9188-75D5-4A53-BD33-8CEF3DB4E14C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhAutoCADBridge.Win", "RhAutoCADBridge\RhAutoCADBridge.Win.csproj", "{79C0254D-E6AE-4B84-AB40-DBDCBCBC85EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{468B9188-75D5-4A53-BD33-8CEF3DB4E14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{468B9188-75D5-4A53-BD33-8CEF3DB4E14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{468B9188-75D5-4A53-BD33-8CEF3DB4E14C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79C0254D-E6AE-4B84-AB40-DBDCBCBC85EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79C0254D-E6AE-4B84-AB40-DBDCBCBC85EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79C0254D-E6AE-4B84-AB40-DBDCBCBC85EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79C0254D-E6AE-4B84-AB40-DBDCBCBC85EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

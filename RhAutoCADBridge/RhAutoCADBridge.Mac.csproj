@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net48</TargetFrameworks>
+    <TargetFrameworks>net7;net48</TargetFrameworks>
     <Version>1.0.3</Version>
     <Title>RhAutoCADBridge</Title>
     <Description>Commands to bridge the gap between Rhinocerous and AutoCAD, such as copy and paste between the apps.</Description>

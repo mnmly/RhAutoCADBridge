@@ -2,15 +2,19 @@
 using System.IO;
 using Rhino;
 using Rhino.Commands;
-using Rhino.Geometry;
-using Rhino.Input;
 using Rhino.Input.Custom;
-using Rhino.UI;
-using Eto.Drawing;
-using Eto.Forms;
-using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+
+#if ON_RUNTIME_APPLE
+ using Eto.Drawing;
+ using Eto.Forms;
+#endif
+
+#if ON_RUNTIME_WIN
+using System.Windows.Forms;
+using System.Text;
+#endif
 
 namespace MNML { 
 
@@ -28,7 +32,6 @@ namespace MNML {
 					RhinoApp.WriteLine("Please select objects before running this commands");
 					return Result.Failure;
 				}
-
 			    var gp = new GetPoint();
 			    gp.SetCommandPrompt("Pick Insertion Point");
 			    gp.Get();
@@ -38,11 +41,88 @@ namespace MNML {
 			    var pointStr = point.X + "," + point.Y + "," + point.Z;
 			    var outPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()+ ".dwg");
 
-			    // Export with origin
-			    var command = "_-ExportWithOrigin " + pointStr + " \"" + outPath + "\" _Enter" ;
+			    // Export projected geometry with origin
+			    var command = "_-ProjectToCplane y _-ExportWithOrigin " + pointStr + " \"" + outPath + "\" _Enter" ;
 			    RhinoApp.RunScript(command, false);
 
-			    var bytes = Encoding.UTF32.GetBytes(outPath);
+#if ON_RUNTIME_WIN
+                // Save the path to clipboard
+                UnicodeEncoding Unicode = new UnicodeEncoding();
+                var bytes = Unicode.GetBytes(outPath);
+                List<byte> arrays = new List<byte>(bytes);
+                // Set actual path allocated length = 520
+                for (var i = arrays.Count; i < 520; i++) { arrays.Add(0); ; }
+                // Set dwg path as dummy allocated length = 520
+                for (var i = 0; i < 520; i++)
+                {
+                    if (i < bytes.Length) { arrays.Add(bytes[i]); }
+                    else { arrays.Add(0); }
+                }
+                // Version Number length = 16
+                var bytes3 = Unicode.GetBytes("R15");
+                for (var i = 0; i < 16; i++)
+                {
+                    if (i < bytes3.Length) { arrays.Add(bytes3[i]); }
+                    else { arrays.Add(0); }
+                }
+
+                //Print("" + arrays.Count);
+
+                // at 1056, coordinate of insertion points;
+                var posXBytes = BitConverter.GetBytes((double)point.X);
+                var posYBytes = BitConverter.GetBytes((double)point.Y);
+                for (var i = 0; i < posXBytes.Length; i++)
+                {
+                    arrays.Add(posXBytes[i]);
+                }
+                for (var i = 0; i < posYBytes.Length; i++)
+                {
+                    arrays.Add(posYBytes[i]);
+                }
+
+                /* 
+                  magic numbers different per copy length = 24
+                  const byte[] data = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                */
+
+                for (var i = 0; i < 24; i++) { arrays.Add(0); }
+
+                // another magic numbers same per copy; length = 8
+                var bytes4 = new byte[] { 0x10, 0x21, 0xB3, 0x00, 0x00, 0x00, 0x00 };
+
+                for (var i = 0; i < 8; i++)
+                {
+                    if (i < bytes4.Length)
+                    {
+                        arrays.Add(bytes4[i]);
+                    }
+                    else
+                    {
+                        arrays.Add(0);
+                    }
+                }
+
+                // yet another magic numbers same per copy; length = 16
+                var bytes5 = new byte[] { 0x50, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                for (var i = 0; i < 16; i++)
+                {
+                    if (i < bytes5.Length) { arrays.Add(bytes5[i]); }
+                    else { arrays.Add(0); }
+                }
+
+                DataObject data = new DataObject();
+                byte[] byteArr = arrays.ToArray();
+                using (MemoryStream memStream = new MemoryStream())
+                {
+                    memStream.Write(byteArr, 0, byteArr.Length);
+                    data.SetText(outPath);
+                    data.SetData("AutoCAD.r22", false, memStream);
+                    Clipboard.SetDataObject(data, true);
+                }
+#endif
+#if ON_RUNTIME_APPLE
+				var bytes = Encoding.UTF32.GetBytes(outPath);
 			    List<byte> arrays = new List<byte>(bytes);
 				
 			    for (var i = 0; i < 4; i++) { 
@@ -50,8 +130,9 @@ namespace MNML {
 				}
 			    // Set data to clipboard
 			    Clipboard.Instance.Clear();
-			    Clipboard.Instance.SetData(arrays.ToArray(), RhAutoCADBridgePlugin.AutoCADFileTypeIdentifier);
-			    return Result.Success;
+			    Clipboard.Instance.SetData(arrays.ToArray(), "AutoCAD.r22");
+#endif
+                return Result.Success;
 			}
 	    }
 	}
